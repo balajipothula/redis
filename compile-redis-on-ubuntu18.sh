@@ -20,9 +20,16 @@ sudo apt -y update
 sudo apt -y upgrade
 
 # installing build essentials.
-sudo apt -y install build-essential gcc g++ make autoconf automake tcl
+sudo apt -y install autoconf        \
+                    automake        \
+                    build-essential \
+                    g++             \
+                    gcc             \
+                    make            \
+                    tcl
 
-# redis source downloading and extracting.
+# redis source downloading, extracting, 
+# compiling and installing.
 curl -JL http://download.redis.io/redis-stable.tar.gz -o $HOME/redis-stable.tar.gz && \
 tar  -xf $HOME/redis-stable.tar.gz -C $HOME                                        && \
 rm   -rf $HOME/redis-stable.tar.gz                                                 && \
@@ -30,10 +37,11 @@ mv       $HOME/redis-stable $HOME/redissrc                                      
 cd       $HOME/redissrc                                                            && \
 make                                                                               && \
 make test                                                                          && \
-mkdir -p $HOME/redis/{conf,log}                                                    && \
+mkdir -p $HOME/redis                                                               && \
 make install PREFIX=$HOME/redis                                                    && \
 cd       $HOME                                                                     && \
 cp       $HOME/redissrc/redis.conf $HOME/redis/conf                                && \
-touch    $HOME/redis/log/{redis.log,redis.pid}                                     && \
+touch    $HOME/redis/{redis.log,redis.pid}                                         && \
 echo "export PATH=$HOME/redis/bin:$PATH" | tee -a $HOME/.bashrc $HOME/.profile     && \
-source   $HOME/.bashrc $HOME/.profile
+source   $HOME/.bashrc $HOME/.profile                                              && \
+rm   -rf $HOME/redissrc
