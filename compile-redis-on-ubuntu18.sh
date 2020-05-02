@@ -4,10 +4,22 @@
 # Date        : 02 May 2020,
 # Description : Installing / Compiling REDIS from Source Code.
 
-# update package repositories.
+# connecting to redis server.
+# redis-cli -h 127.0.0.1 -p 6379 -a password PING
+
+# exit immediately if a command exits with a non-zero exit status.
+set -e
+
+# debugging shell script.
+set -x
+
+# updating package repositories.
 sudo apt -y update
 
-# build essentials installing.
+# upgrading packages.
+sudo apt -y upgrade
+
+# installing build essentials.
 sudo apt -y install build-essential gcc g++ make autoconf automake tcl
 
 # redis source downloading and extracting.
@@ -18,6 +30,10 @@ mv       $HOME/redis-stable $HOME/redissrc                                      
 cd       $HOME/redissrc                                                            && \
 make                                                                               && \
 make test                                                                          && \
-mkdir -p $HOME/redis/conf                                                          && \
+mkdir -p $HOME/redis/{conf,log}                                                    && \
 make install PREFIX=$HOME/redis                                                    && \
-cp       $HOME/redissrc/redis.conf $HOME/redis/conf
+cd       $HOME                                                                     && \
+cp       $HOME/redissrc/redis.conf $HOME/redis/conf                                && \
+touch    $HOME/redis/log/{redis.log,redis.pid}                                     && \
+echo "export PATH=$HOME/redis/bin:$PATH" | tee -a $HOME/.bashrc $HOME/.profile     && \
+source   $HOME/.bashrc $HOME/.profile
